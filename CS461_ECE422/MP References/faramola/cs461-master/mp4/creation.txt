@@ -1,0 +1,9 @@
+CREATE DATABASE project2;
+
+CREATE USER 'fisiaka2'@'localhost' IDENTIFIED BY '1ea14023161737d15b0cfba5ad8c5eba49e51853fc0e11cdb5da46377487ccc7';
+
+GRANT INSERT, UPDATE, SELECT ON project2.* TO 'fisiaka2'@'localhost';
+
+FLUSH PRIVILEGES;
+
+USE project2;

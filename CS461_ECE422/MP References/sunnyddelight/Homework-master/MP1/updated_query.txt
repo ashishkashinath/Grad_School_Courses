@@ -1,0 +1,1 @@
+http://cs461ece422.org/project1/api?token=f54471bd74ae57fcc5cc8e8c6e3f4fd9user=admin&command1=ListFiles&command2=NoOp%80%00%00%00%00%00%00%00%00%00%00%00%00X%01%00%00%00%00%00%00&command3=DeleteAllFiles

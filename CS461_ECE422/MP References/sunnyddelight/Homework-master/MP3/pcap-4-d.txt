@@ -1,0 +1,1 @@
+The ones based around 3DES are a little worrisome since while 3DES is still approved by NIST. Though 3DES is supposedly 168 bits through some cleverness it can be reduced to 112 bits which while still above NIST standards is fairly weak in comparison to the other cipher suites. 

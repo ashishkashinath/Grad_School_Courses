@@ -1,0 +1,1 @@
+No, the domain name needs to be unencrypted otherwise we would not be able to get the ip to create the TLS connection to begin with. 

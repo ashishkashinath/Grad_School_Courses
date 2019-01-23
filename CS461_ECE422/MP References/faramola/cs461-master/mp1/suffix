@@ -1,0 +1,6 @@
+"""
+from hashlib import sha256
+if(sha256(blob).hexdigest()[-1] == 'c'):
+	print "I come in peace."
+else:
+	print "Prepare to be destroyed!"

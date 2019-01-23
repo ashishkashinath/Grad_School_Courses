@@ -1,0 +1,14 @@
+CREATE TABLE users (
+	id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	username varchar(32) NOT NULL,
+	password varchar(32) NOT NULL,
+	passwordhash blob(16) NOT NULL,
+	UNIQUE INDEX (username)
+);
+
+CREATE TABLE history(
+	id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_id INT UNSIGNED NOT NULL,
+	query varchar(2048) NOT NULL,
+	INDEX (user_id)
+);

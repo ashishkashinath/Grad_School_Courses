@@ -1,0 +1,14 @@
+
+
+--> Russell & Norvig Chapter 3,4 (Search Algorithms)
+--> Lavalle Planning Algorithms Chaps 2,3,4,5
+--> Autonomous Mobile Robots Siegwart et.al Chapter 2(until 43), Chapter 6
+
+
+
+----------------------------------------------
+
+20 years of attacks on the RSA cryptosystem (Dan Boneh)
+
+Mind your P's and Q's. (Crypto)
+	

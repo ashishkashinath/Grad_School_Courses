@@ -1,0 +1,16 @@
+SELECT User, Host, Password FROM mysql.user;
+SELECT User, Host, Password, grant_priv FROM mysql.user;
+SELECT User, Host, Password, Insert_priv, Update_priv, Select_priv FROM mysql.user; -- shows privileges on the mysql.user table!
+
+create database project2;
+create user 'linhcao2'@'localhost' IDENTIFIED BY '68f070029ca4260f763ca19ec2594b81af8367d2e3e7ef59dd05d0446ee3b115';
+grant select, insert, update on project2.* to 'linhcao2'@'localhost';
+show grants for 'linhcao2'@'localhost';
+use project2;
+
+drop user linhcao2@localhost;
+DROP DATABASE project2;
+
+show variables;
+show character set
+show collation

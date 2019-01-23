@@ -1,0 +1,8 @@
+server
+https:443
+http:80
+ftp:21
+ssh:22
+
+client:
+none

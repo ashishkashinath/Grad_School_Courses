@@ -1,0 +1,1 @@
+This type of network seems to be one of a large corporation because of two major things. One the use of private network ips tells me it is unlikely to be an ISP backbone network. The other is the use of 10.#.#.# over 192.168.#.# probably means that the network services a large number of computers thus is likely a large corporation over a smaller household network. 

